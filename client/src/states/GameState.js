@@ -30,6 +30,20 @@ export default class GameState extends Phaser.State {
 
     this.addPlatforms(100, 400, 10);
 
+    socket.on('player:move', (playerId, x, y) => {
+      if(this.playerId === playerId) {
+        return;
+      }
+
+      this.playerReferences.forEach((playerRef, i) => {
+        if(playerRef.hasOwnProperty(playerId)) {
+          const ref = Object.values(playerRef)[0];
+            ref.x = x;
+            ref.y = y;
+          }
+      });
+    }); 
+
     //this.player = new Player(this, 100, 245, this.playerId, true);
 	}
 
@@ -42,32 +56,12 @@ export default class GameState extends Phaser.State {
     //    this.restartGame();
     //}
 
-    socket.on('player:move', (playerId, x, y) => {
-      if(this.playerId === playerId) {
-        return;
-      }
-
-      this.players.forEach(player => {
-        this.playerReferences.forEach((playerRef, i) => {
-          if(!playerRef.hasOwnProperty(this.playerId)) {
-            const ref = Object.values(playerRef)[0];
-            if(ref === player) {
-              ref.x = x;
-              ref.y = y;
-              player.x = x;
-              player.y = y;
-            }
-          }
-        });
-      });
-    }); 
-
     this.playerReferences.forEach((player, i) => {
       if(Object.keys(player)[0] === this.playerId) {
-        socket.emit('player:move', this.playerId, Object.values(player)[0].body.x, Object.values(player)[0].body.y);
+        const { x, y } = Object.values(player)[0];
+        socket.emit('player:move', this.playerId, x, y);
       }
     });
-
   }
 
   addPlayers(x, y) {
