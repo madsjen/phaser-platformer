@@ -54,6 +54,8 @@ io.on('connection', (socket) => {
 	socket.on('player:move', (player, x, y) => {
 		const roomId = Object.keys(socket.rooms)[1];
 
+		console.log(x, y)
+
 		io.to(roomId).emit('player:move', socket.id, x, y);
 	});
 })
