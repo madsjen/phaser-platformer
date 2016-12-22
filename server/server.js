@@ -11,9 +11,11 @@ io.on('connection', (socket) => {
 	socket.on('disconnecting', () => {
 		const roomId = Object.keys(socket.rooms)[1];
 
-		delete io.sockets.adapter.rooms[roomId].sockets[socket.id]
+		if(io.sockets.adapter.rooms[roomId]) {
+			delete io.sockets.adapter.rooms[roomId].sockets[socket.id]
 
-		io.to(roomId).emit('lobby:change', io.sockets.adapter.rooms[roomId].sockets);
+			io.to(roomId).emit('lobby:change', io.sockets.adapter.rooms[roomId].sockets);
+		}
 	});
 
 	socket.on('lobby:join', (lobbyName) => {
@@ -35,7 +37,24 @@ io.on('connection', (socket) => {
 
 		socket.join(roomId);
 
-		io.to(roomId).emit('lobby:change', io.sockets.adapter.rooms[roomId].sockets);
+		const player = socket.id;
+
+		const allPlayers = io.sockets.adapter.rooms[roomId].sockets;
+
+		socket.emit('lobby:change', { player, allPlayers });
+		io.to(roomId).emit('lobby:change', { player: '', allPlayers });
+	});
+
+	socket.on('lobby:startGame', () => {
+		const roomId = Object.keys(socket.rooms)[1];
+
+		io.to(roomId).emit('lobby:startGame');
+	});
+
+	socket.on('player:move', (player, x, y) => {
+		const roomId = Object.keys(socket.rooms)[1];
+
+		io.to(roomId).emit('player:move', socket.id, x, y);
 	});
 })
 

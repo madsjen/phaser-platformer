@@ -10,6 +10,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
+    "lodash": "^4.17.2",
     "socket.io-client": "^1.7.1",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.1"

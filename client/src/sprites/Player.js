@@ -1,5 +1,5 @@
 class Player extends Phaser.Sprite {
-  constructor(state, x, y) {
+  constructor(state, x, y, playerId, canBeControlled) {
     super(state.game);
     this.state = state;
 
@@ -14,22 +14,26 @@ class Player extends Phaser.Sprite {
     player.anchor.setTo(-0.2, 0.5); 
     player.body.blocked.down = true;
 
-    // walk left
-    this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
-    this.aKey.onDown.add(this.walk, this);  
-    this.aKey.onUp.add(this.walk, this);  
+    if(canBeControlled) {
+      // walk left
+      this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+      this.aKey.onDown.add(this.walk, this);  
+      this.aKey.onUp.add(this.walk, this);  
 
-    // walk right
-    this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
-    this.dKey.onDown.add(this.walk, this);  
-    this.dKey.onUp.add(this.walk, this);  
+      // walk right
+      this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+      this.dKey.onDown.add(this.walk, this);  
+      this.dKey.onUp.add(this.walk, this);  
 
-    // jump
-    this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-    this.spaceKey.onDown.add(this.jump, this); 
+      // jump
+      this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+      this.spaceKey.onDown.add(this.jump, this); 
+    }
+
+    this.playerId = playerId;
 
     return player;
-	}
+  }
 
   walk() {
     const { aKey, dKey, player } = this;
